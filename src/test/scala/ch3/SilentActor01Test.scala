@@ -1,7 +1,7 @@
 package ch3
 
-import akka.actor.ActorSystem
-import akka.testkit.{TestFSMRef, TestActorRef, TestKit}
+import akka.actor.{Props, ActorSystem}
+import akka.testkit.{TestActorRef, TestKit}
 import org.scalatest.{MustMatchers, WordSpecLike}
 
 class SilentActor01Test extends TestKit(ActorSystem("testSystem"))
@@ -14,17 +14,20 @@ class SilentActor01Test extends TestKit(ActorSystem("testSystem"))
     "change state when it received message single-threaded" in {
       import SilentActorProtocol._
 
-      val fsm = TestFSMRef(new SilentActor)
-      val typed: TestActorRef[SilentActor] = fsm
-
       val silentActor = TestActorRef[SilentActor]
       silentActor ! SilentMessage("whisper")
 
-      println(silentActor.underlying.currentMessage)
+      silentActor.underlyingActor.state must contain ("whisper")
     }
 
     "change state when it received message multi-threaded" in {
-      fail(???.toString)
+      import SilentActorProtocol._
+      val silentActor = system.actorOf(Props[SilentActor], "s3")
+      silentActor ! SilentMessage("whisper1")
+      silentActor ! SilentMessage("whisper2")
+      silentActor ! GetState(testActor)
+
+      expectMsg(Vector("whisper1", "whisper2"))
     }
 
   }
