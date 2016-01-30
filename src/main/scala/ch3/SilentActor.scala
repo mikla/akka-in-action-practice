@@ -1,6 +1,6 @@
 package ch3
 
-import akka.actor.Actor
+import akka.actor.{ActorRef, Actor}
 import ch3.SilentActorProtocol.{GetState, SilentMessage}
 
 class SilentActor extends Actor {
@@ -16,5 +16,12 @@ class SilentActor extends Actor {
   }
 
   def state = internalState
+
+}
+
+object SilentActorProtocol {
+
+  case class SilentMessage(msg: String)
+  case class GetState(actor: ActorRef)
 
 }
