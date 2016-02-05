@@ -1,0 +1,3 @@
+object RemotingApp extends App {}
+
+}

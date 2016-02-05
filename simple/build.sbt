@@ -1,4 +1,4 @@
-name := "akka-in-action-practice"
+name := "akka-in-action-practice simple"
 
 version := "1.0"
 
