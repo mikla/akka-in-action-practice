@@ -1,3 +1,0 @@
-object RemotingApp extends App {}
-
-}
