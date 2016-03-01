@@ -6,6 +6,8 @@ scalaVersion := "2.11.7"
 val akkaVersion = "2.3.12"
 val sprayVersion = "1.3.3"
 
+enablePlugins(JavaAppPackaging)
+
 libraryDependencies ++=
   Seq(
     "com.typesafe.akka" %% "akka-actor" % akkaVersion,
