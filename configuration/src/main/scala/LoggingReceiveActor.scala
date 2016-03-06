@@ -6,7 +6,7 @@ import akka.event.LoggingReceive
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.FiniteDuration
 
-class LoggedActor extends Actor with ActorLogging {
+class LoggingReceiveActor extends Actor with ActorLogging {
 
   override def preStart(): Unit = {
     context.system.scheduler.schedule(FiniteDuration(1, TimeUnit.SECONDS), FiniteDuration(2, TimeUnit.SECONDS), self, "from scheduler")

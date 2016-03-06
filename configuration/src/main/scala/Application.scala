@@ -1,7 +1,8 @@
-import akka.actor.{Props, ActorSystem, ActorSelection}
+import akka.actor.{Actor, ActorSystem, Props}
+import akka.event.Logging
 import com.typesafe.config.ConfigFactory
 
-object Application extends App {
+object Application {
 	val config = ConfigFactory.load()
 
   println {
@@ -15,7 +16,8 @@ object Application extends App {
   }
 
   val configuredActorSystem = ActorSystem("myapp", myAppConfig)
-  val loggedActorRef = configuredActorSystem.actorOf(Props[LoggedActor], "logged-actor")
+  val loggedActorRef = configuredActorSystem.actorOf(Props[LoggingReceiveActor], "logged-actor")
   loggedActorRef ! "message"
 
 }
+
