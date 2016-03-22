@@ -2,7 +2,7 @@ package routers
 
 import akka.actor.{Props, ActorSystem, AddressFromURIString}
 import akka.remote.routing.RemoteRouterConfig
-import akka.routing.RoundRobinPool
+import akka.routing.{DefaultResizer, RoundRobinPool}
 import com.typesafe.config.ConfigFactory
 
 object RouterRemote extends App {
@@ -14,6 +14,8 @@ object RouterRemote extends App {
     AddressFromURIString("akka.tcp://node-1@0.0.0.0:2551"),
     AddressFromURIString("akka.tcp://node-2@0.0.0.0:2552")
   )
+
+//  val resizer = DefaultResizer(1, 10, 1, 0.25)
 
   val routerRemote = system.actorOf(
     RemoteRouterConfig(RoundRobinPool(5), addresses).props(
