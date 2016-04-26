@@ -1,6 +1,6 @@
-import akka.actor.FSM.Event
 import akka.actor._
-import scala.concurrent.ExecutionContext.global
+
+import scala.concurrent.duration._
 
 object Main extends App {
 
@@ -8,10 +8,13 @@ object Main extends App {
   val inventory = system.actorOf(Props[Inventory])
 
   inventory ! StateRequest()
+  inventory ! "ala"
   inventory ! StateTwo
   inventory ! StateRequest()
 
   readLine()
+
+  inventory ! PoisonPill
 
   system.shutdown()
 }
@@ -30,22 +33,34 @@ class Inventory()
     case Event(StateTwo, data: StateData) =>
       println("Changing state", data)
       goto(StateTwo) using data.copy(data = "state2-data") // provide new state data
-
-  }
-  when(StateTwo) {
-    case Event(_, data) =>
-      println("StateTwo got", data)
+    case Event("ala", data) =>
+      println("got ala")
       stay
   }
-  onTransition {
-    case StateOne -> StateTwo =>
-      println("onTransition, changing state")
+
+  when(StateTwo, stateTimeout = 10.seconds) {
+    case Event(StateRequest, data) =>
+      println("StateTwo got", data)
+      stay
+    case Event(StateTimeout, _) =>
+      println("TimedOut. Going to StateOne")
+      goto(StateOne)
   }
 
   whenUnhandled {
     case Event(e, s) =>
       println("unhandled state {} {}", e, s)
       stay
+  }
+
+  onTransition {
+    case StateOne -> StateTwo =>
+      println("onTransition, changing state")
+  }
+
+  onTermination {
+    case StopEvent(_, _, _) =>
+      println("Terminated")
   }
 
   initialize()
