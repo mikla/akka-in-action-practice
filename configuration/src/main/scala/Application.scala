@@ -1,8 +1,7 @@
-import akka.actor.{Actor, ActorSystem, Props}
-import akka.event.Logging
+import akka.actor.{ActorSystem, Props}
 import com.typesafe.config.ConfigFactory
 
-object Application {
+object Application extends App {
 	val config = ConfigFactory.load()
 
   println {
