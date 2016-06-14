@@ -1,0 +1,3 @@
+object EventSourcedApp extends App {
+
+}
