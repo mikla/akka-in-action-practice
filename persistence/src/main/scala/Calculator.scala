@@ -1,5 +1,5 @@
 import akka.actor.ActorLogging
-import akka.persistence.{PersistentActor, RecoveryCompleted}
+import akka.persistence.{PersistentActor, RecoveryCompleted, SnapshotOffer}
 
 class Calculator extends PersistentActor with ActorLogging {
 
@@ -14,12 +14,19 @@ class Calculator extends PersistentActor with ActorLogging {
     case Multiply(v) => persist(Multiplied(v))(updateState)
     case PrintResult => println(s"Result is: ${state.result}")
     case GetResult => sender() ! state.result
-    case Clear => persist(Reset)(updateState)
+    case Clear =>
+      persist(Reset)(updateState)
+      saveSnapshot(Snapshot(state))
   }
 
   override def receiveRecover: Receive = {
-    case event: Event => updateState(event)
-    case RecoveryCompleted => log.info("Calculator recovery completed")
+    case event: Event =>
+      updateState(event)
+    case SnapshotOffer(_, snapshot: Snapshot) =>
+      log.info(s"Recovering from snapshot $snapshot for $persistenceId")
+      state = snapshot.state
+    case RecoveryCompleted =>
+      log.info("Calculator recovery completed")
   }
 
   val updateState: Event => Unit = {
