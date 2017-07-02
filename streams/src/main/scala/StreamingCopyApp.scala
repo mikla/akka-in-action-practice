@@ -1,13 +1,14 @@
-import java.nio.file.{Path, Paths, StandardOpenOption}
-
-import akka.stream.{ActorMaterializer, IOResult}
-import akka.stream.scaladsl.{FileIO, RunnableGraph, Sink, Source}
-import akka.util.ByteString
+import java.nio.file.Paths
 import java.nio.file.StandardOpenOption._
 
+import akka.Done
 import akka.actor.ActorSystem
+import akka.stream.scaladsl.{FileIO, Keep, RunnableGraph, Sink, Source}
+import akka.stream.{ActorMaterializer, IOResult}
+import akka.util.ByteString
 
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 object StreamingCopyApp extends App {
 
@@ -18,6 +19,12 @@ object StreamingCopyApp extends App {
   val sink: Sink[ByteString, Future[IOResult]] = FileIO.toPath(outputFile, Set(CREATE, WRITE, APPEND))
 
   val runnableGraph: RunnableGraph[Future[IOResult]] = source.to(sink)
+
+  val runnableGraphBoth = source.toMat(sink)(Keep.both)
+
+  val runnableGraphCustomFunction = source.toMat(sink) { (left, right) =>
+    Future.sequence(List(left, right)).map(_ => Done)
+  }
 
   implicit val system = ActorSystem()
   implicit val ec = system.dispatcher
