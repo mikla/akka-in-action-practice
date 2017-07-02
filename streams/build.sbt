@@ -2,10 +2,9 @@ name := "akka-in-action-practice streams"
 
 version := "1.0"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.12.2"
 
-val akkaVersion = "2.4.17"
-val sprayVersion = "1.3.3"
+val akkaVersion = "2.5.3"
 
 libraryDependencies ++=
   Seq(
@@ -13,9 +12,9 @@ libraryDependencies ++=
     "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
     "com.typesafe.akka" %% "akka-stream" % akkaVersion,
     "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion,
-    "ch.qos.logback" % "logback-classic" % "1.1.3",
+    "ch.qos.logback" % "logback-classic" % "1.2.3",
     "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test",
-    "org.scalatest" %% "scalatest" % "2.2.0" % "test"
+    "org.scalatest" %% "scalatest" % "3.0.1" % "test"
   )
 
 
