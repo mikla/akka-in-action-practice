@@ -16,3 +16,6 @@ case class Event(host: String,
 }
 
 case class State(state: String)
+
+case class LogReceipt(logId: String, written: Long)
+case class ParseError(logId: String, msg: String)

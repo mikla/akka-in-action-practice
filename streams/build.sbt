@@ -6,6 +6,7 @@ scalaVersion := "2.12.2"
 
 val akkaVersion = "2.5.3"
 val akkaHttpVersion = "10.0.9"
+val circeVersion = "0.8.0"
 
 libraryDependencies ++=
   Seq(
@@ -15,7 +16,10 @@ libraryDependencies ++=
     "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion,
 
     "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
-    "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion,
+
+    "io.circe" %% "circe-core" % circeVersion,
+    "io.circe" %% "circe-generic" % circeVersion,
+    "io.circe" %% "circe-parser" % circeVersion,
 
     "ch.qos.logback" % "logback-classic" % "1.2.3",
     "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test",
