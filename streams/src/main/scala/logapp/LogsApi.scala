@@ -1,6 +1,6 @@
 package logapp
 
-import java.nio.file.Path
+import java.nio.file.{Files, Path}
 
 import events.{Event, LogLineProcessor, LogReceipt, ParseError}
 import akka.http.scaladsl.model._
@@ -9,8 +9,8 @@ import akka.stream.scaladsl.{BidiFlow, FileIO, Flow, Framing, Keep}
 import akka.stream.{ActorMaterializer, IOResult}
 import akka.util.ByteString
 import akka.{Done, NotUsed}
-
 import events.Codecs._
+
 import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success}
 import io.circe.syntax._
@@ -35,7 +35,7 @@ class LogsApi(
     .collect { case Some(e) => e }
   val outFlow: Flow[Event, ByteString, NotUsed] = Flow[Event].map { event =>
     ByteString(event.asJson.noSpaces)
-  }
+  }.intersperse(ByteString("["), ByteString(","), ByteString("]"))
 
   // The bidirectional flow is joined with a flow that passes every event through unchanged.
   val bidiFlow: BidiFlow[ByteString, Event, Event, ByteString, NotUsed] = BidiFlow.fromFlows(inFlow, outFlow)
@@ -46,7 +46,7 @@ class LogsApi(
     FileIO.toPath(logFile(logId), Set(CREATE, WRITE, APPEND))
   def logFileSource(logId: String) = FileIO.fromPath(logFile(logId))
 
-  def routes: Route = postRoute
+  def routes: Route = postRoute ~ getRoute
 
   def postRoute = pathPrefix("logs" / Segment) { logId =>
     pathEndOrSingleSlash {
@@ -67,6 +67,17 @@ class LogsApi(
               complete(StatusCodes.BadRequest, ParseError(logId, e.getMessage).asJson.noSpaces)
           }
         }
+      }
+    }
+  }
+
+  def getRoute = pathPrefix("logs" / Segment) { logId =>
+    pathEndOrSingleSlash {
+      get {
+        if (Files.exists(logFile(logId))) {
+          val src = logFileSource(logId)
+          complete(HttpEntity(ContentTypes.`application/json`, src))
+        } else complete(StatusCodes.NotFound)
       }
     }
   }
