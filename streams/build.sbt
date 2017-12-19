@@ -2,11 +2,12 @@ name := "akka-in-action-practice streams"
 
 version := "1.0"
 
-scalaVersion := "2.12.2"
+scalaVersion := "2.12.4"
 
-val akkaVersion = "2.5.3"
-val akkaHttpVersion = "10.0.9"
+val akkaVersion = "2.5.8"
+val akkaHttpVersion = "10.0.11"
 val circeVersion = "0.8.0"
+val monixVersion = "2.3.0"
 
 libraryDependencies ++=
   Seq(
@@ -20,6 +21,8 @@ libraryDependencies ++=
     "io.circe" %% "circe-core" % circeVersion,
     "io.circe" %% "circe-generic" % circeVersion,
     "io.circe" %% "circe-parser" % circeVersion,
+
+    "io.monix" %% "monix" % monixVersion,
 
     "ch.qos.logback" % "logback-classic" % "1.2.3",
     "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test",
