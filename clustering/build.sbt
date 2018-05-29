@@ -2,10 +2,10 @@
 lazy val commonSettings = Seq(
   name := "akka-in-action-practice clustering",
   version := "1.0",
-  scalaVersion := "2.12.3"
+  scalaVersion := "2.12.4"
 )
 
-val akkaVersion = "2.5.4"
+val akkaVersion = "2.5.12"
 
 val dependencies = Seq(
   "com.typesafe.akka" %% "akka-actor" % akkaVersion,

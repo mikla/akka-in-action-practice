@@ -15,7 +15,7 @@ object Main extends App {
   if (roles.contains("master")) {
     Cluster(system).registerOnMemberUp {
       val receptionist = system.actorOf(Props[JobReceptionist], "receptionist")
-      println("Master node is read.y")
+      println("Master node is ready.")
     }
   }
 
