@@ -4,7 +4,7 @@ import akka.cluster.ClusterEvent._
 
 class ClusterDomainEventListener extends Actor with ActorLogging {
 
-  Cluster(context.system).subscribe(self, classOf[ClusterDomainEvent])
+  val cluster = Cluster(context.system)
 
   override def receive: Receive = {
     case MemberUp(member) => log.info(s"$member OP!")
@@ -19,11 +19,16 @@ class ClusterDomainEventListener extends Actor with ActorLogging {
     case UnreachableMember(m)   => log.info(s"$m UNREACHABLE")
     case ReachableMember(m)     => log.info(s"$m REACHABLE")
     case s: CurrentClusterState => log.info(s"cluster state: $s")
+    case _: MemberEvent ⇒ ()
+  }
 
+  override def preStart(): Unit = {
+    cluster.subscribe(self, initialStateMode = InitialStateAsEvents,
+      classOf[MemberEvent], classOf[UnreachableMember])
   }
 
   override def postStop(): Unit = {
-    Cluster(context.system).unsubscribe(self)
+    cluster.unsubscribe(self)
     super.postStop()
   }
 
